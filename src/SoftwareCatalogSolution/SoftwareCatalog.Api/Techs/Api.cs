@@ -1,6 +1,7 @@
 ﻿
 
 using Marten;
+using Riok.Mapperly.Abstractions;
 
 namespace SoftwareCatalog.Api.Techs;
 
@@ -25,27 +26,12 @@ public class Api : ControllerBase
 
 
 
+        // what is this? From a Create Tech Request, create a TechReponse
+        var response = request.MapToResponse();
 
-        var response = new TechResponse
-        {
-            Id = Guid.NewGuid(),
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Email = request.Email,
-            Phone = request.Phone,
-        };
+        var entity = response.MapToEntity();
 
-        var entity = new TechEntity
-        {
-            Id = response.Id,
-            FirstName = response.FirstName,
-            LastName = response.LastName,
-            Email = response.Email,
-            Phone = response.Phone,
-            DateAdded = DateTimeOffset.UtcNow
-        };
-
-        session.Insert(entity);
+        session.Store(entity);
         await session.SaveChangesAsync();
 
         return Created($"/techs/{response.Id}", response);
@@ -54,8 +40,18 @@ public class Api : ControllerBase
     [HttpGet("/techs/{id:guid}")]
     public async Task<ActionResult> GetByIdAsync(Guid Id, [FromServices] IDocumentSession session, CancellationToken token)
     {
-
-        var entity = await session.Query<TechEntity>().SingleOrDefaultAsync(t => t.Id == Id);
+        // Marten code. Your code goes here.
+        var entity = await session.Query<TechEntity>()
+            .Where(t => t.Id == Id)
+            .Select(t => new TechResponse
+            {
+                Id = t.Id,
+                FirstName = t.FirstName,
+                LastName = t.LastName,
+                Email = t.Email,
+                Phone = t.Phone
+            })
+            .SingleOrDefaultAsync();
 
         if (entity is null)
         {
@@ -76,6 +72,18 @@ public record CreateTechRequest
     public string LastName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
+
+    public TechResponse MapToResponse()
+    {
+        return new TechResponse
+        {
+            Id = Guid.NewGuid(),
+            FirstName = FirstName,
+            LastName = LastName,
+            Email = Email,
+            Phone = Phone,
+        };
+    }
 }
 
 public record TechResponse
@@ -85,6 +93,14 @@ public record TechResponse
     public string LastName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
+}
+
+[Mapper]
+public static partial class TechMappers
+{
+    public static partial TechEntity MapToEntity(this TechResponse response);
+    //  public static partial IQueryable<TechResponse> ProjectToResponse(this TechEntity entity);
+
 }
 
 public class CreateTechRequestValidator : AbstractValidator<CreateTechRequest>
