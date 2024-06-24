@@ -5,13 +5,13 @@ POST {{address}}/techs
 Content-Type: application/json
 
 {
-  "firstName": "Bob",
+  "firstName": "Jules",
   "lastName": "Jones",
-  "email": "bob@compuserve.com",
+  "email": "jules@compuserve.com",
   "phone": "867-5309"
 }
 
 
 ### 
 
-GET {{address}}/techs/eb747a30-ba14-4495-8afc-e923f32ec624
+GET {{address}}/techs/d9512c21-0e4c-4ea8-993f-b2f91d10de1d

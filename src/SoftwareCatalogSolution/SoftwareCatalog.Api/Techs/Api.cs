@@ -50,6 +50,22 @@ public class Api : ControllerBase
 
         return Created($"/techs/{response.Id}", response);
     }
+
+    [HttpGet("/techs/{id:guid}")]
+    public async Task<ActionResult> GetByIdAsync(Guid Id, [FromServices] IDocumentSession session, CancellationToken token)
+    {
+
+        var entity = await session.Query<TechEntity>().SingleOrDefaultAsync(t => t.Id == Id);
+
+        if (entity is null)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return Ok(entity);
+        }
+    }
 }
 
 
