@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication().AddJwtBearer();
 // Add services to the container.
+builder.Services.AddSingleton(() => TimeProvider.System);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

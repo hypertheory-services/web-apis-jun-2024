@@ -16,6 +16,7 @@ public class Api : ControllerBase
         [FromBody] CreateTechRequest request,
         [FromServices] IValidator<CreateTechRequest> validator,
         [FromServices] IDocumentSession session,
+        [FromServices] TimeProvider timeProvider,
         CancellationToken token)
     {
         // Judge the heck out of us.
@@ -29,11 +30,14 @@ public class Api : ControllerBase
 
         var addedBy = User.Claims.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
+        var isInRole = User.IsInRole("Admin"); // something like this. TODO.
+
         // what is this? From a Create Tech Request, create a TechReponse
         var response = request.MapToResponse();
 
         var entity = response.MapToEntity();
         entity.AddedBy = addedBy;
+        entity.DateAdded = timeProvider.GetUtcNow();
 
         session.Store(entity);
         await session.SaveChangesAsync();
@@ -65,6 +69,26 @@ public class Api : ControllerBase
         {
             return Ok(entity);
         }
+    }
+    [HttpGet("/techs")]
+    public async Task<ActionResult> GetAllTechs(
+
+        [FromServices] IDocumentSession session, CancellationToken token,
+         [FromQuery] string? email = null
+        )
+    {
+        IQueryable<TechEntity> techs;
+        if (email is null)
+        {
+            techs = session.Query<TechEntity>().AsQueryable();
+        }
+        else
+        {
+            techs = session.Query<TechEntity>().Where(t => t.Email == email);
+        }
+
+        var response = await techs.ToListAsync();
+        return Ok(new { techs = response });
     }
 }
 
@@ -109,12 +133,17 @@ public static partial class TechMappers
 
 public class CreateTechRequestValidator : AbstractValidator<CreateTechRequest>
 {
-    public CreateTechRequestValidator()
+    public CreateTechRequestValidator(IDocumentSession session)
     {
         RuleFor(c => c.FirstName).NotEmpty();
         RuleFor(c => c.LastName).NotEmpty().MinimumLength(3).MaximumLength(20);
         RuleFor(c => c.Email).NotEmpty().EmailAddress();
         RuleFor(c => c.Phone).NotEmpty().WithMessage("Give us a company phone number, please");
+        RuleFor(c => c.Email).MustAsync(async (email, cancellation) =>
+        {
+            var exists = await session.Query<TechEntity>().AnyAsync(t => t.Email == email, cancellation);
+            return !exists;
+        }).WithMessage("Another Tech Is Using that Email Address");
     }
 }
 
