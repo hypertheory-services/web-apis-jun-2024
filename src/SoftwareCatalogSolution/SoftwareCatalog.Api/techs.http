@@ -6,9 +6,9 @@ Content-Type: application/json
 
 {
   "firstName": "Bob",
-  "lastName": "Smith",
 
-  "email": "bob@aol.com",
+
+  "email": "bobaol.com",
   "phone": "867-5309"
 }
 

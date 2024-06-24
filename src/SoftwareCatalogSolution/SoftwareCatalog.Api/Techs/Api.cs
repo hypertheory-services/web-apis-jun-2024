@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using SoftwareCatalog.Api.Shared;
 
 namespace SoftwareCatalog.Api.Techs;
 
@@ -16,7 +17,9 @@ public class Api : ControllerBase
         var validations = await validator.ValidateAsync(request, token);
         if (!validations.IsValid)
         {
-            return BadRequest(validations.ToDictionary());
+            return this.CreateProblemDetailsForModelValidation(
+                "Unable to add this tech.",
+                validations.ToDictionary());
         }
 
         // Is the person making the request allowed to make this request (Authn/Authz) Later.
