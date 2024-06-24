@@ -3,6 +3,7 @@ using SoftwareCatalog.Api.Techs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthentication().AddJwtBearer();
 // Add services to the container.
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -30,6 +31,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

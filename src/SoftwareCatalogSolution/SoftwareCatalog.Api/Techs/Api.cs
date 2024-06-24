@@ -1,13 +1,16 @@
 ﻿
 
+using JasperFx.Core;
 using Marten;
+using Microsoft.AspNetCore.Authorization;
 using Riok.Mapperly.Abstractions;
+using System.Security.Claims;
 
 namespace SoftwareCatalog.Api.Techs;
 
 public class Api : ControllerBase
 {
-
+    [Authorize]
     [HttpPost("/techs")]
     public async Task<ActionResult> AddATechAsync(
         [FromBody] CreateTechRequest request,
@@ -24,12 +27,13 @@ public class Api : ControllerBase
                 validations.ToDictionary());
         }
 
-
+        var addedBy = User.Claims.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
         // what is this? From a Create Tech Request, create a TechReponse
         var response = request.MapToResponse();
 
         var entity = response.MapToEntity();
+        entity.AddedBy = addedBy;
 
         session.Store(entity);
         await session.SaveChangesAsync();

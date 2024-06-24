@@ -1,8 +1,9 @@
 @address = http://localhost:1337
-
+@bossToken=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImJvc3NAY29tcGFueS5jb20iLCJzdWIiOiJib3NzQGNvbXBhbnkuY29tIiwianRpIjoiNjVlYmVlMzQiLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDoxMzMwNyIsImh0dHBzOi8vbG9jYWxob3N0OjAiLCJodHRwOi8vbG9jYWxob3N0OjEzMzciXSwibmJmIjoxNzE5MjU4NTA1LCJleHAiOjE3MjcyMDczMDUsImlhdCI6MTcxOTI1ODUwNiwiaXNzIjoiZG90bmV0LXVzZXItand0cyJ9.qzincC55mErmHKlmAoFRBS3JFfZlkzpjodbAyODWr_0
 
 POST {{address}}/techs
 Content-Type: application/json
+Authorization: {{bossToken}}
 
 {
   "firstName": "Joe",

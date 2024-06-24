@@ -1,14 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>a312484a-e753-478f-ae1f-8e4c5e1071d2</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
     <PackageReference Include="Marten.AspNetCore" Version="7.20.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
     <PackageReference Include="Riok.Mapperly" Version="3.6.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
