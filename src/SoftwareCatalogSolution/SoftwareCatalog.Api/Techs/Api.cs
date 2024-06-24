@@ -1,6 +1,6 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
-using SoftwareCatalog.Api.Shared;
+﻿
+
+using Marten;
 
 namespace SoftwareCatalog.Api.Techs;
 
@@ -11,6 +11,7 @@ public class Api : ControllerBase
     public async Task<ActionResult> AddATechAsync(
         [FromBody] CreateTechRequest request,
         [FromServices] IValidator<CreateTechRequest> validator,
+        [FromServices] IDocumentSession session,
         CancellationToken token)
     {
         // Judge the heck out of us.
@@ -22,12 +23,8 @@ public class Api : ControllerBase
                 validations.ToDictionary());
         }
 
-        // Is the person making the request allowed to make this request (Authn/Authz) Later.
-        // did they send us the right data?
-        //   if not, send them an error.
-        // If they did, do we want this person as a tech?
-        // - Business rules, etc....
-        // If so,create a new subordinate resource.
+
+
 
         var response = new TechResponse
         {
@@ -37,6 +34,20 @@ public class Api : ControllerBase
             Email = request.Email,
             Phone = request.Phone,
         };
+
+        var entity = new TechEntity
+        {
+            Id = response.Id,
+            FirstName = response.FirstName,
+            LastName = response.LastName,
+            Email = response.Email,
+            Phone = response.Phone,
+            DateAdded = DateTimeOffset.UtcNow
+        };
+
+        session.Insert(entity);
+        await session.SaveChangesAsync();
+
         return Created($"/techs/{response.Id}", response);
     }
 }

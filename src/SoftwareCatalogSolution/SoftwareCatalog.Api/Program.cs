@@ -1,5 +1,6 @@
-using FluentValidation;
+using Marten;
 using SoftwareCatalog.Api.Techs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +14,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateTechRequestValidator>();
+
+var connectionString = builder.Configuration.GetConnectionString("data") ?? throw new Exception("Need A Connection String");
+builder.Services.AddMarten(options =>
+{
+    options.Connection(connectionString);
+}).UseLightweightSessions();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
