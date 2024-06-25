@@ -10,10 +10,11 @@ namespace SoftwareCatalog.Api.Techs;
 
 [Produces("application/json")]
 [ApiExplorerSettings(GroupName = "Techs")]
+[Route("techs")]
 public class Api(IDocumentSession session) : ControllerBase
 {
     [Authorize]
-    [HttpPost("/techs")]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerOperation(Tags = ["Techs"])]
@@ -57,7 +58,7 @@ public class Api(IDocumentSession session) : ControllerBase
     /// <param name="Id"></param>
     /// <param name="token"></param>
     /// <returns></returns>
-    [HttpGet("/techs/{id:guid}")]
+    [HttpGet("{id:guid}")] // techs/{guid}
     [SwaggerOperation(Tags = ["Techs"])]
     public async Task<ActionResult<TechResponse>> GetByIdAsync(Guid Id, CancellationToken token)
     {
@@ -76,7 +77,7 @@ public class Api(IDocumentSession session) : ControllerBase
             return Ok(entity);
         }
     }
-    [HttpGet("/techs")]
+    [HttpGet]
     [SwaggerOperation(Tags = ["Techs"])]
     public async Task<ActionResult> GetAllTechs(
        CancellationToken token,

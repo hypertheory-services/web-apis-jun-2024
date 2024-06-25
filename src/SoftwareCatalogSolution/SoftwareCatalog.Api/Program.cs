@@ -1,10 +1,13 @@
 using Marten;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
+using SoftwareCatalog.Api.Catalog;
 using SoftwareCatalog.Api.Techs;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddFeatureManagement();
 
 builder.Services.AddAuthentication().AddJwtBearer();
 // Add services to the container.
@@ -73,5 +76,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 // Hey, if I get an HTTP "GET" to "/weatherforecast" - create the controller and call that method.
+app.MapGet("/tacos", () => "Delicious");
 
+if (await app.Services.GetRequiredService<IFeatureManager>().IsEnabledAsync("Catalog"))
+{
+
+    app.MapCatalogApi();
+}
 app.Run();

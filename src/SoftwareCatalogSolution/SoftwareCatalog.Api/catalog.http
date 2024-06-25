@@ -1,0 +1,10 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+### Get Some Tacos
+
+GET {{address}}/tacos
+
+
+### Get the Catalog
+
+GET {{address}}/catalog
