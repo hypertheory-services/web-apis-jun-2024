@@ -19,6 +19,11 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("SoftwareCenter");
         policy.RequireRole("Admin");
     });
+
+    options.AddPolicy("IsSoftwareCenter", policy =>
+    {
+        policy.RequireRole("SoftwareCenter");
+    });
 });
 // Add services to the container.
 builder.Services.AddSingleton(() => TimeProvider.System);

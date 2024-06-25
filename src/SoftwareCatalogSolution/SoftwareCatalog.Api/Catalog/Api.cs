@@ -17,7 +17,7 @@ public static class Api
 
 
         newSoftwareGroup.MapPost("/", AddNewSoftwareToCatalog).RequireAuthorization("IsSoftwareCenterAdmin");
-        newSoftwareGroup.MapGet("{id:guid}", GetSoftwareById).RequireAuthorization(); // Todo add a policy
+        newSoftwareGroup.MapGet("{id:guid}", GetSoftwareById).RequireAuthorization("IsSoftwareCenter");
         return builder;
     }
 

@@ -42,6 +42,7 @@ Location: /new-software/98
 
 ## Assigning an Owner
 
+TODO: AFter Break - make a way for a tech to see a list of these.
 Any SoftwareCenter Tech can see a list of approved software from the Admins (see above) that has not yet been assigned an owner.
 A Tech can take ownership of this piece of software.
 
