@@ -4,9 +4,9 @@ Content-Type: application/json
 Authorization: {{sueToken}}
 
 {
-  "firstName": "George",
+  "firstName": "Sue",
   "lastName": "Gonzalez",
-  "email": "rollyh@aol.com",
+  "email": "sue@aol.com",
   "phone": "867-5309"
 }
 

@@ -1,5 +1,8 @@
 using Marten;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.OpenApi.Models;
 using SoftwareCatalog.Api.Techs;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +16,38 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header with bearer token",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Scheme = "Bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                },
+                Scheme = "oauth2",
+                Name = "Bearer ",
+                In = ParameterLocation.Header
+            },[]
+        }
+    });
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    //options.DocInclusionPredicate((_, api) => !string.IsNullOrWhiteSpace(api.GroupName));
+    //options.EnableAnnotations();
+});
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateTechRequestValidator>();
 
@@ -22,6 +56,8 @@ builder.Services.AddMarten(options =>
 {
     options.Connection(connectionString);
 }).UseLightweightSessions();
+
+builder.Services.AddFluentValidationRulesToSwagger();
 
 var app = builder.Build();
 

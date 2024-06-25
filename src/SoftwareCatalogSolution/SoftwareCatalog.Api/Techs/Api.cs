@@ -64,23 +64,20 @@ public class Api(IDocumentSession session) : ControllerBase
     }
     [HttpGet("/techs")]
     public async Task<ActionResult> GetAllTechs(
-
        CancellationToken token,
-         [FromQuery] string? email = null
+       [FromQuery] string? email = null
         )
     {
-        IQueryable<TechEntity> techs;
-        if (email is null)
+        IQueryable<TechEntity> techs = session.Query<TechEntity>();
+        if (email is not null)
         {
-            techs = session.Query<TechEntity>().AsQueryable();
-        }
-        else
-        {
-            techs = session.Query<TechEntity>().Where(t => t.Email == email);
+            techs = techs.Where(t => t.Email == email);
         }
 
-        var response = await techs.ToListAsync();
+
+        var response = await techs.ToListAsync(token);
         return Ok(new { techs = response });
+
     }
 }
 
