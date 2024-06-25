@@ -17,8 +17,8 @@ Authorization: {{bossToken}}
 Content-Type: application/json
 
 {
-    "title": "Jetbrains Rider",
-    "description": ".NET IDE"
+    "title": "Baldur's Gate",
+    "description": "Game"
 }
 
 ### Get a New Software Item
@@ -31,3 +31,9 @@ Authorization: {{sueToken}}
 
 GET {{address}}/new-software
 Authorization: {{sueToken}}
+
+
+### Delete One
+
+DELETE {{address}}/new-software/023724ff-67d8-41c6-9a82-150d93ed7b6a
+Authorization: {{bossToken}}

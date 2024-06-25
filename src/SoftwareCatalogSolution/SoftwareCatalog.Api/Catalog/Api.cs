@@ -19,6 +19,9 @@ public static class Api
         newSoftwareGroup.MapPost("/", AddNewSoftwareToCatalog).RequireAuthorization("IsSoftwareCenterAdmin");
         newSoftwareGroup.MapGet("{id:guid}", GetSoftwareById).RequireAuthorization("IsSoftwareCenter");
         newSoftwareGroup.MapGet("/", GetAllNewSoftware).RequireAuthorization("IsSoftwareCenter");
+        newSoftwareGroup.MapDelete("{id:guid}", DeleteNewSoftware)
+            .RequireAuthorization("IsSoftwareCenterAdmin");
+        // TODO We will make up another business rule for this - Only the admin that created this can delete it.
         return builder;
     }
 
@@ -68,6 +71,7 @@ public static class Api
     }
 
     public static async Task<Ok<CollectionResponse<NewSoftwareResponse>>> GetAllNewSoftware(
+        IHttpContextAccessor contextAcccessor,
         IDocumentSession session)
     {
         var software = await session.Query<NewSoftwareEntity>()
@@ -77,6 +81,20 @@ public static class Api
         var response = new CollectionResponse<NewSoftwareResponse>() { Data = [.. software] };
 
         return TypedResults.Ok(response);
+    }
+
+    public static async Task<Results<NoContent, ForbidHttpResult>> DeleteNewSoftware(
+        Guid id,
+        IDocumentSession session,
+        IHttpContextAccessor contextAccessor)
+    {
+
+
+        session.Delete<NewSoftwareEntity>(id);
+        await session.SaveChangesAsync();
+
+        return TypedResults.NoContent();
+
     }
 }
 

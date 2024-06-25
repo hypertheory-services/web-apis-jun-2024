@@ -28,6 +28,11 @@ Content-Type: application/json
     "description": "Super rad editor"
 }
 
+DELETE /new-software/98
+Content-Type: application/json
+
+
+
 201 Created
 Location: /new-software/98
 

@@ -1,5 +1,6 @@
 using Marten;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
 using SoftwareCatalog.Api.Catalog;
@@ -12,12 +13,14 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication().AddJwtBearer();
 
+builder.Services.AddScoped<IAuthorizationHandler, ShouldBeCreatorOfNewSoftwareRequirementHandler>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("IsSoftwareCenterAdmin", policy =>
     {
         policy.RequireRole("SoftwareCenter");
         policy.RequireRole("Admin");
+        policy.AddRequirements(new ShouldBeCreatorOfNewSoftwareRequirement());
     });
 
     options.AddPolicy("IsSoftwareCenter", policy =>
