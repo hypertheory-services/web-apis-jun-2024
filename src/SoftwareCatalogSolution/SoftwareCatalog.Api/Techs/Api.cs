@@ -92,7 +92,7 @@ public class Api(IDocumentSession session) : ControllerBase
 
 
         var response = await techs.ToListAsync(token);
-        return Ok(new { techs = response });
+        return Ok(new { data = response, count = response.Count });
 
     }
 }

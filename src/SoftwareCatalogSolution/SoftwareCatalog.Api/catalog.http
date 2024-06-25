@@ -25,3 +25,9 @@ Content-Type: application/json
 
 GET {{address}}/new-software/b0025560-22da-410b-aaae-fb4ffd1418f9
 Authorization: {{sueToken}}
+
+
+### Get a list of new software
+
+GET {{address}}/new-software
+Authorization: {{sueToken}}

@@ -18,6 +18,7 @@ public static class Api
 
         newSoftwareGroup.MapPost("/", AddNewSoftwareToCatalog).RequireAuthorization("IsSoftwareCenterAdmin");
         newSoftwareGroup.MapGet("{id:guid}", GetSoftwareById).RequireAuthorization("IsSoftwareCenter");
+        newSoftwareGroup.MapGet("/", GetAllNewSoftware).RequireAuthorization("IsSoftwareCenter");
         return builder;
     }
 
@@ -65,8 +66,25 @@ public static class Api
             _ => TypedResults.Ok(entity.MapToResponse())
         };
     }
+
+    public static async Task<Ok<CollectionResponse<NewSoftwareResponse>>> GetAllNewSoftware(
+        IDocumentSession session)
+    {
+        var software = await session.Query<NewSoftwareEntity>()
+            .ProjectToResponse()
+            .ToListAsync();
+
+        var response = new CollectionResponse<NewSoftwareResponse>() { Data = [.. software] };
+
+        return TypedResults.Ok(response);
+    }
 }
 
+
+public class CollectionResponse<T>
+{
+    public IList<T> Data { get; set; } = [];
+}
 
 public record CreateNewSoftwareRequest
 {
@@ -98,4 +116,5 @@ public static partial class NewSoftwareMappers
 {
     public static partial NewSoftwareEntity MapToEntity(this NewSoftwareResponse response);
     public static partial NewSoftwareResponse MapToResponse(this NewSoftwareEntity response);
+    public static partial IQueryable<NewSoftwareResponse> ProjectToResponse(this IQueryable<NewSoftwareEntity> entity);
 }
