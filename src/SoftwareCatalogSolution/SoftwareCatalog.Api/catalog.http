@@ -8,3 +8,17 @@ GET {{address}}/tacos
 ### Get the Catalog
 
 GET {{address}}/catalog
+
+
+### Add an Item to the Catalog
+
+POST {{address}}/catalog-addition-requests
+Authorization: {{bossToken}}
+Content-Type: application/json
+
+{
+  "title": "Visual Studio Code",
+  "description": "Editor for Developers",
+  "owner": "6d2957c4-5c1f-40fb-acc7-b54942a4686b"
+
+}
