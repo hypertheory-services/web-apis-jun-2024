@@ -3,19 +3,18 @@
 using JasperFx.Core;
 using Marten;
 using Microsoft.AspNetCore.Authorization;
-using Riok.Mapperly.Abstractions;
 using System.Security.Claims;
 
 namespace SoftwareCatalog.Api.Techs;
 
-public class Api : ControllerBase
+public class Api(IDocumentSession session) : ControllerBase
 {
     [Authorize]
     [HttpPost("/techs")]
     public async Task<ActionResult> AddATechAsync(
         [FromBody] CreateTechRequest request,
         [FromServices] IValidator<CreateTechRequest> validator,
-        [FromServices] IDocumentSession session,
+
         [FromServices] TimeProvider timeProvider,
         CancellationToken token)
     {
@@ -46,19 +45,12 @@ public class Api : ControllerBase
     }
 
     [HttpGet("/techs/{id:guid}")]
-    public async Task<ActionResult> GetByIdAsync(Guid Id, [FromServices] IDocumentSession session, CancellationToken token)
+    public async Task<ActionResult> GetByIdAsync(Guid Id, CancellationToken token)
     {
         // Marten code. Your code goes here.
         var entity = await session.Query<TechEntity>()
             .Where(t => t.Id == Id)
-            .Select(t => new TechResponse
-            {
-                Id = t.Id,
-                FirstName = t.FirstName,
-                LastName = t.LastName,
-                Email = t.Email,
-                Phone = t.Phone
-            })
+            .ProjectToResponse()
             .SingleOrDefaultAsync();
 
         if (entity is null)
@@ -73,7 +65,7 @@ public class Api : ControllerBase
     [HttpGet("/techs")]
     public async Task<ActionResult> GetAllTechs(
 
-        [FromServices] IDocumentSession session, CancellationToken token,
+       CancellationToken token,
          [FromQuery] string? email = null
         )
     {
@@ -93,65 +85,5 @@ public class Api : ControllerBase
 }
 
 
-public record CreateTechRequest
-{
 
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Phone { get; set; } = string.Empty;
 
-    public TechResponse MapToResponse()
-    {
-        return new TechResponse
-        {
-            Id = Guid.NewGuid(),
-            FirstName = FirstName,
-            LastName = LastName,
-            Email = Email,
-            Phone = Phone,
-        };
-    }
-}
-
-public record TechResponse
-{
-    public Guid Id { get; set; }
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Phone { get; set; } = string.Empty;
-}
-
-[Mapper]
-public static partial class TechMappers
-{
-    public static partial TechEntity MapToEntity(this TechResponse response);
-    //  public static partial IQueryable<TechResponse> ProjectToResponse(this TechEntity entity);
-
-}
-
-public class CreateTechRequestValidator : AbstractValidator<CreateTechRequest>
-{
-    public CreateTechRequestValidator(IDocumentSession session)
-    {
-        RuleFor(c => c.FirstName).NotEmpty();
-        RuleFor(c => c.LastName).NotEmpty().MinimumLength(3).MaximumLength(20);
-        RuleFor(c => c.Email).NotEmpty().EmailAddress();
-        RuleFor(c => c.Phone).NotEmpty().WithMessage("Give us a company phone number, please");
-        RuleFor(c => c.Email).MustAsync(async (email, cancellation) =>
-        {
-            var exists = await session.Query<TechEntity>().AnyAsync(t => t.Email == email, cancellation);
-            return !exists;
-        }).WithMessage("Another Tech Is Using that Email Address");
-    }
-}
-
-/*
- *  Operation: Create a Tech
-
- * Operands:
-    - We need their name (first, last),
-    - we need their email address
-    - We need their phone number
-    - we need their "identifier" (sub claim) (more on this later)*/
