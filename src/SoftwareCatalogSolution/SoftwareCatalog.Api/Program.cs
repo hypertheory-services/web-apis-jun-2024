@@ -45,8 +45,8 @@ builder.Services.AddSwaggerGen(options =>
     });
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-    //options.DocInclusionPredicate((_, api) => !string.IsNullOrWhiteSpace(api.GroupName));
-    //options.EnableAnnotations();
+    options.DocInclusionPredicate((_, api) => !string.IsNullOrWhiteSpace(api.GroupName));
+    options.EnableAnnotations();
 });
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateTechRequestValidator>();

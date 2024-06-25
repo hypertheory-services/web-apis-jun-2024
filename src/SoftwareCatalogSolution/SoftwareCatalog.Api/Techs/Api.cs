@@ -3,15 +3,21 @@
 using JasperFx.Core;
 using Marten;
 using Microsoft.AspNetCore.Authorization;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace SoftwareCatalog.Api.Techs;
 
+[Produces("application/json")]
+[ApiExplorerSettings(GroupName = "Techs")]
 public class Api(IDocumentSession session) : ControllerBase
 {
     [Authorize]
     [HttpPost("/techs")]
-    public async Task<ActionResult> AddATechAsync(
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Tags = ["Techs"])]
+    public async Task<ActionResult<TechResponse>> AddATechAsync(
         [FromBody] CreateTechRequest request,
         [FromServices] IValidator<CreateTechRequest> validator,
 
@@ -44,8 +50,16 @@ public class Api(IDocumentSession session) : ControllerBase
         return Created($"/techs/{response.Id}", response);
     }
 
+
+    /// <summary>
+    /// This will allow you to get information about a tech.
+    /// </summary>
+    /// <param name="Id"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
     [HttpGet("/techs/{id:guid}")]
-    public async Task<ActionResult> GetByIdAsync(Guid Id, CancellationToken token)
+    [SwaggerOperation(Tags = ["Techs"])]
+    public async Task<ActionResult<TechResponse>> GetByIdAsync(Guid Id, CancellationToken token)
     {
         // Marten code. Your code goes here.
         var entity = await session.Query<TechEntity>()
@@ -63,6 +77,7 @@ public class Api(IDocumentSession session) : ControllerBase
         }
     }
     [HttpGet("/techs")]
+    [SwaggerOperation(Tags = ["Techs"])]
     public async Task<ActionResult> GetAllTechs(
        CancellationToken token,
        [FromQuery] string? email = null
