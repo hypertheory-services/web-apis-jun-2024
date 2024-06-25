@@ -2,6 +2,16 @@
 
 A item in the catalog has to be assigned to a tech that is the "owner" of that software.
 
+The process of assigning a tech to own a piece of software is:
+
+A software center manager assigns a tech to own the software.
+
+However, THAT tech has to approve ownership before it is listed in the catalog.
+
+```
+h
+
+```
 
 ## Techs
 
