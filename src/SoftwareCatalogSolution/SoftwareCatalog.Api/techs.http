@@ -1,7 +1,4 @@
 
-@bossToken=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImJvc3NAY29tcGFueS5jb20iLCJzdWIiOiJib3NzQGNvbXBhbnkuY29tIiwianRpIjoiNjVlYmVlMzQiLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDoxMzMwNyIsImh0dHBzOi8vbG9jYWxob3N0OjAiLCJodHRwOi8vbG9jYWxob3N0OjEzMzciXSwibmJmIjoxNzE5MjU4NTA1LCJleHAiOjE3MjcyMDczMDUsImlhdCI6MTcxOTI1ODUwNiwiaXNzIjoiZG90bmV0LXVzZXItand0cyJ9.qzincC55mErmHKlmAoFRBS3JFfZlkzpjodbAyODWr_0
-@sueToken=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InN1ZUBhb2wuY29tIiwic3ViIjoic3VlQGFvbC5jb20iLCJqdGkiOiIyMWM2Y2IwOSIsInJvbGUiOlsiU29mdHdhcmVDZW50ZXIiLCJBZG1pbiJdLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDoxMzMwNyIsImh0dHBzOi8vbG9jYWxob3N0OjAiLCJodHRwOi8vbG9jYWxob3N0OjEzMzciXSwibmJmIjoxNzE5MjU5MTU0LCJleHAiOjE3MjcyMDc5NTQsImlhdCI6MTcxOTI1OTE1NSwiaXNzIjoiZG90bmV0LXVzZXItand0cyJ9.mdP-I22lzBve0EK3xAOPQvb_0eVLDQKgP7KYkS1Hz5A
-
 POST {{address}}/techs
 Content-Type: application/json
 Authorization: {{sueToken}}
@@ -9,7 +6,7 @@ Authorization: {{sueToken}}
 {
   "firstName": "George",
   "lastName": "Gonzalez",
-  "email": "george@aol.com",
+  "email": "rollyh@aol.com",
   "phone": "867-5309"
 }
 
