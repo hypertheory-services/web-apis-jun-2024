@@ -8,8 +8,18 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddFeatureManagement();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication().AddJwtBearer();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("IsSoftwareCenterAdmin", policy =>
+    {
+        policy.RequireRole("SoftwareCenter");
+        policy.RequireRole("Admin");
+    });
+});
 // Add services to the container.
 builder.Services.AddSingleton(() => TimeProvider.System);
 

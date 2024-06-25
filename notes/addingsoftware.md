@@ -13,6 +13,32 @@ The operands are:
 - The title of the software (Must be unique)
 - A description of the software
 
+Design Vectors:
+- URIs 
+- Representations
+- Methods
+
+```
+POST /new-software
+Authorization: {{softwareCenterAdminToken}}
+Content-Type: application/json
+
+{
+    "title": "VSCode",
+    "description": "Super rad editor"
+}
+
+201 Created
+Location: /new-software/98
+
+{
+    "id": "99",
+    "title": "VSCode",
+    "description": "Super rad editor",
+    "createdBy": "boss@company.com",
+    "addedOn": "DTZ"
+}
+```
 
 ## Assigning an Owner
 
@@ -20,6 +46,6 @@ Any SoftwareCenter Tech can see a list of approved software from the Admins (see
 A Tech can take ownership of this piece of software.
 
 Rules:
-Each piece of software can only have one owner.
-After an owner claims the software it should "appear" as a resource in the catalog.
-A tech can own multiple pieces of software.
+- Each piece of software can only have one owner.
+- After an owner claims the software it should "appear" as a resource in the catalog.
+- A tech can own multiple pieces of software.

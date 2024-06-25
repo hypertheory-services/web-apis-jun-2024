@@ -10,15 +10,18 @@ GET {{address}}/tacos
 GET {{address}}/catalog
 
 
-### Add an Item to the Catalog
+### Add New Software
 
-POST {{address}}/catalog-addition-requests
+POST {{address}}/new-software
 Authorization: {{bossToken}}
 Content-Type: application/json
 
 {
-  "title": "Visual Studio Code",
-  "description": "Editor for Developers",
-  "owner": "6d2957c4-5c1f-40fb-acc7-b54942a4686b"
-
+    "title": "Jetbrains Rider",
+    "description": ".NET IDE"
 }
+
+### Get a New Software Item
+
+GET {{address}}/new-software/b0025560-22da-410b-aaae-fb4ffd1418f9
+Authorization: {{sueToken}}
