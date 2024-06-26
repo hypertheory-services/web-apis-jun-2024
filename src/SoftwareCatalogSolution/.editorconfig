@@ -1,4 +1,4 @@
 
 [*.{cs,vb}]
-dotnet_diagnotics.ASP0025.severity = warning # AuthenticationBuilder
-dotnet_diagnostic.CA2016.severity = warning # CancellationToken
+dotnet_diagnotics.ASP0025.severity = warning # AuthenticationBuilder Not Working Yet.
+dotnet_diagnostic.CA2016.severity = error # CancellationToken

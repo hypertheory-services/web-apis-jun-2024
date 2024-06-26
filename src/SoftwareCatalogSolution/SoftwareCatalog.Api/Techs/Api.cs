@@ -46,7 +46,7 @@ public class Api(IDocumentSession session) : ControllerBase
         entity.DateAdded = timeProvider.GetUtcNow();
 
         session.Store(entity);
-        await session.SaveChangesAsync();
+        await session.SaveChangesAsync(token);
 
         return Created($"/techs/{response.Id}", response);
     }
@@ -60,13 +60,13 @@ public class Api(IDocumentSession session) : ControllerBase
     /// <returns></returns>
     [HttpGet("{id:guid}")] // techs/{guid}
     [SwaggerOperation(Tags = ["Techs"])]
-    public async Task<ActionResult<TechResponse>> GetByIdAsync(Guid Id, CancellationToken token)
+    public async Task<ActionResult<TechResponse>> GetByIdAsync(Guid id, CancellationToken token)
     {
         // Marten code. Your code goes here.
         var entity = await session.Query<TechEntity>()
-            .Where(t => t.Id == Id)
+            .Where(t => t.Id == id)
             .ProjectToResponse()
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync(token: token);
 
         if (entity is null)
         {

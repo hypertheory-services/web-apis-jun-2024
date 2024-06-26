@@ -15,20 +15,17 @@ builder.Services.AddAuthentication().AddJwtBearer();
 
 builder.Services.AddScoped<IAuthorizationHandler, ShouldBeCreatorOfNewSoftwareRequirementHandler>();
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("IsSoftwareCenterAdmin", policy =>
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("IsSoftwareCenterAdmin", policy =>
     {
         policy.RequireRole("SoftwareCenter");
         policy.RequireRole("Admin");
         policy.AddRequirements(new ShouldBeCreatorOfNewSoftwareRequirement());
-    });
-
-    options.AddPolicy("IsSoftwareCenter", policy =>
+    })
+    .AddPolicy("IsSoftwareCenter", policy =>
     {
         policy.RequireRole("SoftwareCenter");
     });
-});
 // Add services to the container.
 builder.Services.AddSingleton(() => TimeProvider.System);
 
