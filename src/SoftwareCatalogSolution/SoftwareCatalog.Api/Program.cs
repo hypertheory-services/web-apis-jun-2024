@@ -14,6 +14,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication().AddJwtBearer();
 
 builder.Services.AddScoped<IAuthorizationHandler, ShouldBeCreatorOfNewSoftwareRequirementHandler>();
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("IsSoftwareCenterAdmin", policy =>
