@@ -33,7 +33,24 @@ GET {{address}}/new-software
 Authorization: {{sueToken}}
 
 
+### Can Get One
+
+GET {{address}}/new-software/b0025560-22da-410b-aaae-fb4ffd1418f9
+
 ### Delete One
 
 DELETE {{address}}/new-software/023724ff-67d8-41c6-9a82-150d93ed7b6a
 Authorization: {{bossToken}}
+
+
+### Assign Tech as Owner
+POST {{address}}/techs/6797b1fe-9f5b-4458-a2f2-2b1442440d65/owned-software
+Content-Type: application/json
+
+{
+      "id": "c475c7a1-0311-44a7-8ff0-15ab4111e1f0",
+      "title": "Baldur's Gate",
+      "description": "Game",
+      "createdBy": "boss@company.com",
+      "addedOn": "2024-06-26T15:51:49.527764-04:00"
+    }

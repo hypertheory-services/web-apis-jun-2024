@@ -13,6 +13,9 @@ public static class Api
     {
         var catalogGroup = builder.MapGroup("catalog");
         var newSoftwareGroup = builder.MapGroup("new-software");
+        // POST /tech/owned-software
+        // POST /techs/b0025560-22da-410b-aaae-fb4ffd1418f9/owned-software
+        builder.MapPost("/techs/{techId:guid}/owned-software", TakeOwnershipOfSoftware); // ...
         catalogGroup.MapGet("/", GetTheCatalog);
 
 
@@ -25,11 +28,72 @@ public static class Api
         return builder;
     }
 
-    public static async Task<Ok<string>> GetTheCatalog(
+    public static async Task<Results<BadRequest<string>, Ok>> TakeOwnershipOfSoftware(
+        Guid techId,
+        NewSoftwareResponse request,
         IDocumentSession session,
         CancellationToken token)
     {
-        return TypedResults.Ok("The Catalog Goes Here Minimal");
+        // Rules
+        // AuthN/AuthZ - skip.
+        // validate the request entity 
+        // - If it isn't owned by anyone else, it will be in the table with that same id from the request.
+        //  - "It isn't owned by anyone else" - if it's owned by someone else, that won't be in the table
+        // what has to happen if those rules are ok
+        // - Create a "CatalogEntity" and save it in the database. 
+        // - Remove the NewSoftwareEntity from the database (I'll do a hard delete, but you do you)
+        // - Set of the reference for the tech so they know they own that software
+        // - Set the reference from the CatalogEntity so it knows who the owner is.
+        var idOfSoftware = request.Id;
+        var savedNewSoftwareEntity = await session
+            .Query<NewSoftwareEntity>()
+            .SingleOrDefaultAsync(s => s.Id == idOfSoftware, token);
+
+        if (savedNewSoftwareEntity is null)
+        {
+            return TypedResults.BadRequest("That software no longer exists");
+        }
+        else
+        {
+            var newCatalogEntity = new CatalogEntity
+            {
+                Id = Guid.NewGuid(),
+                Title = savedNewSoftwareEntity.Title,
+                Description = savedNewSoftwareEntity.Description,
+                Owner = techId,
+
+            };
+            session.Store(newCatalogEntity);
+            session.Delete<NewSoftwareEntity>(savedNewSoftwareEntity.Id);
+
+            await session.SaveChangesAsync(token); // this is a "transaction script"
+
+        }
+        return TypedResults.Ok();
+    }
+
+    public static async Task<Ok<CollectionResponse<CatalogItemResponse>>> GetTheCatalog(
+        IDocumentSession session,
+        CancellationToken token)
+    {
+        var catalog = await session.Query<CatalogEntity>()
+            .ToListAsync(token);
+
+        // this is bad code... don't judge (yet)
+        List<CatalogItemResponse> data = [];
+        foreach (var c in catalog)
+        {
+            var r = new CatalogItemResponse
+            {
+                Id = c.Id,
+                Title = c.Title,
+
+            };
+            r.Embedded.Add("info", new MetaInfo { Description = c.Description });
+            r.Links.Add("owner", $"/techs/{c.Owner}");
+            data.Add(r);
+        }
+        return TypedResults.Ok(new CollectionResponse<CatalogItemResponse> { Data = data });
     }
 
     public static async Task<Created<NewSoftwareResponse>> AddNewSoftwareToCatalog(
@@ -135,4 +199,12 @@ public static partial class NewSoftwareMappers
     public static partial NewSoftwareEntity MapToEntity(this NewSoftwareResponse response);
     public static partial NewSoftwareResponse MapToResponse(this NewSoftwareEntity response);
     public static partial IQueryable<NewSoftwareResponse> ProjectToResponse(this IQueryable<NewSoftwareEntity> entity);
+}
+
+public class CatalogEntity
+{
+    public Guid Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public Guid Owner { get; set; }
 }

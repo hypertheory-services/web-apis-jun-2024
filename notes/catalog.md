@@ -135,3 +135,27 @@ GET /employees/13
         "employee:salary": "/employees/13/salary"
     }
 }
+
+
+```json
+{
+  "id": "6d2957c4-5c1f-40fb-acc7-b54942a4686b",
+  "firstName": "Joe",
+  "lastName": "Gonzalez",
+  "email": "joe@aol.com",
+  "phone": "867-5309"
+}
+```
+
+```json
+{
+  "id": "6d2957c4-5c1f-40fb-acc7-b54942a4686b",
+  "firstName": "Joe",
+  "lastName": "Gonzalez",
+  "email": "joe@aol.com",
+  "phone": "867-5309",
+  "_links": {
+    "tech:owned-software": "/techs/6d2957c4-5c1f-40fb-acc7-b54942a4686b/owned-software"
+  }
+}
+```
